@@ -1,0 +1,440 @@
+{
+    "info": {
+        "name": "GKPI Cimahi Backend",
+        "description": "API Collection for GKPI Cimahi Backend",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"jemaat@example.com\",\n    \"password\": \"rahasia123\",\n    \"role\": \"jemaat\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "register"]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"admin@gkpicimahi.org\",\n    \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Me",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "me"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Jemaat",
+            "item": [
+                {
+                    "name": "Get All Jemaat",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/jemaat",
+                            "host": ["{{base_url}}"],
+                            "path": ["jemaat"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Jemaat",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nama_lengkap\": \"Andi Manurung\",\n    \"alamat\": \"Cimahi Utara\",\n    \"no_telepon\": \"0899123456\",\n    \"status\": \"aktif\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/jemaat",
+                            "host": ["{{base_url}}"],
+                            "path": ["jemaat"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Jadwal",
+            "item": [
+                {
+                    "name": "Get Jadwal",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/jadwal",
+                            "host": ["{{base_url}}"],
+                            "path": ["jadwal"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Jadwal (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nama_ibadah\": \"Ibadah Malam\",\n    \"waktu\": \"2026-10-10T18:00:00Z\",\n    \"lokasi\": \"Gereja GKPI Cimahi\",\n    \"pengkhotbah\": \"Pdt. Siagian\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/jadwal",
+                            "host": ["{{base_url}}"],
+                            "path": ["jadwal"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Artikel",
+            "item": [
+                {
+                    "name": "Get Artikel",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/artikel",
+                            "host": ["{{base_url}}"],
+                            "path": ["artikel"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Artikel (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"judul\": \"Berita Suka Cita\",\n    \"konten\": \"Isi dari berita suka cita...\",\n    \"penulis\": \"Admin\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/artikel",
+                            "host": ["{{base_url}}"],
+                            "path": ["artikel"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Renungan",
+            "item": [
+                {
+                    "name": "Get Renungan Today",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/renungan/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["renungan", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Renungan (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"judul\": \"Renungan Pagi\",\n    \"ayat\": \"Yohanes 3:16\",\n    \"konten\": \"Karena begitu besar...\",\n    \"tanggal\": \"2026-07-13T00:00:00Z\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/renungan",
+                            "host": ["{{base_url}}"],
+                            "path": ["renungan"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pengumuman",
+            "item": [
+                {
+                    "name": "Get Pengumuman",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/pengumuman",
+                            "host": ["{{base_url}}"],
+                            "path": ["pengumuman"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Pengumuman (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"judul\": \"Latihan Koor\",\n    \"konten\": \"Latihan koor ama malam ini...\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pengumuman",
+                            "host": ["{{base_url}}"],
+                            "path": ["pengumuman"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Galeri",
+            "item": [
+                {
+                    "name": "Get Galeri",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/galeri",
+                            "host": ["{{base_url}}"],
+                            "path": ["galeri"]
+                        }
+                    }
+                },
+                {
+                    "name": "Upload Galeri (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"judul\": \"Foto Ibadah Natal\",\n    \"file_url\": \"https://supabase.co/storage/v1/object/public/gkpi/natal.jpg\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/galeri/upload",
+                            "host": ["{{base_url}}"],
+                            "path": ["galeri", "upload"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Donasi",
+            "item": [
+                {
+                    "name": "Create Donasi",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nama_donatur\": \"Hamba Tuhan\",\n    \"jumlah\": 50000\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/donasi",
+                            "host": ["{{base_url}}"],
+                            "path": ["donasi"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Donasi Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/donasi/1/status",
+                            "host": ["{{base_url}}"],
+                            "path": ["donasi", "1", "status"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "AI Proxy",
+            "item": [
+                {
+                    "name": "Digitize Arsip",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"document_url\": \"https://example.com/arsip.pdf\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/ai/arsip/digitize",
+                            "host": ["{{base_url}}"],
+                            "path": ["ai", "arsip", "digitize"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
