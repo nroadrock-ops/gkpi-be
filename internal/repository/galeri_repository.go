@@ -9,6 +9,7 @@ type GaleriRepository interface {
 	FindAll() ([]domain.Galeri, error)
 	FindByID(id uint) (*domain.Galeri, error)
 	Create(galeri *domain.Galeri) error
+	Update(galeri *domain.Galeri) error
 	Delete(id uint) error
 }
 
@@ -34,6 +35,10 @@ func (r *galeriRepository) FindByID(id uint) (*domain.Galeri, error) {
 
 func (r *galeriRepository) Create(galeri *domain.Galeri) error {
 	return r.db.Create(galeri).Error
+}
+
+func (r *galeriRepository) Update(galeri *domain.Galeri) error {
+	return r.db.Save(galeri).Error
 }
 
 func (r *galeriRepository) Delete(id uint) error {

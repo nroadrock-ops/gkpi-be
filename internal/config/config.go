@@ -8,10 +8,12 @@ import (
 )
 
 type Config struct {
-	DatabaseURL        string
-	SupabaseURL        string
-	SupabaseServiceKey string
-	JWTSecret          string
+	DatabaseURL            string
+	SupabaseURL            string
+	SupabaseServiceKey     string
+	JWTSecret              string
+	AIServiceURL           string
+	AIServiceInternalKey   string
 }
 
 func LoadConfig() *Config {
@@ -21,9 +23,11 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		DatabaseURL:        os.Getenv("SUPABASE_DB_URL"),
-		SupabaseURL:        os.Getenv("SUPABASE_URL"),
-		SupabaseServiceKey: os.Getenv("SUPABASE_SERVICE_KEY"),
-		JWTSecret:          os.Getenv("JWT_SECRET"),
+		DatabaseURL:          os.Getenv("SUPABASE_DB_URL"),
+		SupabaseURL:          os.Getenv("SUPABASE_URL"),
+		SupabaseServiceKey:   os.Getenv("SUPABASE_SERVICE_KEY"),
+		JWTSecret:            os.Getenv("JWT_SECRET"),
+		AIServiceURL:         os.Getenv("AI_SERVICE_URL"),
+		AIServiceInternalKey: os.Getenv("AI_SERVICE_INTERNAL_KEY"),
 	}
 }

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gkpi-be/internal/config"
 	"gkpi-be/internal/handler"
 	"gkpi-be/internal/middleware"
 	"gkpi-be/internal/repository"
@@ -11,6 +12,8 @@ import (
 )
 
 func SetupRoutes(app *fiber.App, db *gorm.DB) {
+	cfg := config.LoadConfig()
+
 	// Repositories
 	userRepo := repository.NewUserRepository(db)
 	jemaatRepo := repository.NewJemaatRepository(db)
@@ -21,6 +24,9 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	galeriRepo := repository.NewGaleriRepository(db)
 	donasiRepo := repository.NewDonasiRepository(db)
 
+	// AI Client with BaseURL and Internal Key
+	aiClient := service.NewAIServiceClient(cfg.AIServiceURL, cfg.AIServiceInternalKey)
+
 	// Services
 	authSvc := service.NewAuthService(userRepo)
 	jemaatSvc := service.NewJemaatService(jemaatRepo)
@@ -28,9 +34,8 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	artikelSvc := service.NewArtikelService(artikelRepo)
 	renunganSvc := service.NewRenunganService(renunganRepo)
 	pengumumanSvc := service.NewPengumumanService(pengumumanRepo)
-	galeriSvc := service.NewGaleriService(galeriRepo)
+	galeriSvc := service.NewGaleriService(galeriRepo, aiClient) // Inject aiClient
 	donasiSvc := service.NewDonasiService(donasiRepo)
-	aiClient := service.NewAIServiceClient("http://ai-service:5000/api/v1") // Mock AI Service URL
 
 	// Handlers
 	authHdl := handler.NewAuthHandler(authSvc)
@@ -102,9 +107,9 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	donasi.Post("/webhook", donasiHdl.Webhook)
 
 	// AI Proxy
-	ai := api.Group("/ai") // maybe protected depending on rules, assuming public for now or add middleware if needed
+	ai := api.Group("/ai")
 	ai.Post("/arsip/digitize", aiHdl.DigitizeArsip)
-	ai.Post("/galeri/auto-tag", aiHdl.AutoTagGaleri)
+	ai.Post("/galeri/auto-tag", aiHdl.AutoTagGaleri) // This is if someone calls it directly
 	ai.Post("/absensi/enroll", aiHdl.EnrollAbsensi)
 	ai.Post("/absensi/check-in", aiHdl.CheckInAbsensi)
 	ai.Get("/absensi/history/:jemaat_id", aiHdl.HistoryAbsensi)
