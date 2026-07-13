@@ -33,7 +33,15 @@ func main() {
 	app := fiber.New()
 
 	// Middleware
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		Next: func(c *fiber.Ctx) bool {
+			// Skip logging for Next.js HMR requests to prevent console spam
+			if len(c.Path()) >= 7 && c.Path()[:7] == "/_next/" {
+				return true
+			}
+			return false
+		},
+	}))
 	app.Use(cors.New())
 
 	// Setup routes

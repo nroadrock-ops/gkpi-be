@@ -30,6 +30,9 @@ func Protected() fiber.Handler {
 		claims := token.Claims.(jwt.MapClaims)
 		c.Locals("user_id", claims["user_id"])
 		c.Locals("role", claims["role"])
+		if claims["jemaat_id"] != nil {
+			c.Locals("jemaat_id", claims["jemaat_id"])
+		}
 
 		return c.Next()
 	}
@@ -41,6 +44,17 @@ func AdminOnly() fiber.Handler {
 		role := c.Locals("role")
 		if role != "admin" {
 			return utils.JSONResponse(c, fiber.StatusForbidden, false, nil, "Admin access required")
+		}
+		return c.Next()
+	}
+}
+
+// RequireRole restricts access to users with a specific role
+func RequireRole(requiredRole string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		role := c.Locals("role")
+		if role != requiredRole {
+			return utils.JSONResponse(c, fiber.StatusForbidden, false, nil, "Access forbidden for your role")
 		}
 		return c.Next()
 	}

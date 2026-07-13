@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'jemaat',
+    jemaat_id INTEGER REFERENCES jemaats(id),
+    reset_password_otp VARCHAR(6),
+    reset_password_otp_expired_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS galeris (
 
 CREATE TABLE IF NOT EXISTS donasis (
     id SERIAL PRIMARY KEY,
+    jemaat_id INTEGER REFERENCES jemaats(id),
     nama_donatur VARCHAR(255),
     jumlah NUMERIC(15,2) NOT NULL,
     status VARCHAR(50) DEFAULT 'pending',

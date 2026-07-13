@@ -65,3 +65,34 @@ func (h *JemaatHandler) Delete(c *fiber.Ctx) error {
 	}
 	return utils.JSONResponse(c, fiber.StatusOK, true, nil, "Jemaat deleted")
 }
+
+func (h *JemaatHandler) GetMeProfile(c *fiber.Ctx) error {
+	jemaatIDLocal := c.Locals("jemaat_id")
+	if jemaatIDLocal == nil {
+		return utils.JSONResponse(c, fiber.StatusForbidden, false, nil, "Only jemaat can access this profile")
+	}
+	jemaatID := uint(jemaatIDLocal.(float64))
+
+	jemaat, err := h.service.GetByID(jemaatID)
+	if err != nil {
+		return utils.JSONResponse(c, fiber.StatusNotFound, false, nil, "Jemaat profile not found")
+	}
+	return utils.JSONResponse(c, fiber.StatusOK, true, jemaat, "Jemaat profile")
+}
+
+func (h *JemaatHandler) UpdateMeProfile(c *fiber.Ctx) error {
+	jemaatIDLocal := c.Locals("jemaat_id")
+	if jemaatIDLocal == nil {
+		return utils.JSONResponse(c, fiber.StatusForbidden, false, nil, "Only jemaat can access this profile")
+	}
+	jemaatID := uint(jemaatIDLocal.(float64))
+
+	var jemaat domain.Jemaat
+	if err := c.BodyParser(&jemaat); err != nil {
+		return utils.JSONResponse(c, fiber.StatusBadRequest, false, nil, "Invalid body")
+	}
+	if err := h.service.Update(jemaatID, &jemaat); err != nil {
+		return utils.JSONResponse(c, fiber.StatusInternalServerError, false, nil, err.Error())
+	}
+	return utils.JSONResponse(c, fiber.StatusOK, true, nil, "Profile updated")
+}

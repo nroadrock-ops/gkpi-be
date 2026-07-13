@@ -28,7 +28,7 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	aiClient := service.NewAIServiceClient(cfg.AIServiceURL, cfg.AIServiceInternalKey)
 
 	// Services
-	authSvc := service.NewAuthService(userRepo)
+	authSvc := service.NewAuthService(userRepo, jemaatRepo)
 	jemaatSvc := service.NewJemaatService(jemaatRepo)
 	jadwalSvc := service.NewJadwalService(jadwalRepo)
 	artikelSvc := service.NewArtikelService(artikelRepo)
@@ -55,16 +55,28 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	auth.Post("/register", authHdl.Register)
 	auth.Post("/login", authHdl.Login)
 	auth.Post("/refresh", authHdl.Refresh)
+	auth.Post("/forgot-password", authHdl.ForgotPassword)
+	auth.Post("/reset-password", authHdl.ResetPassword)
 	auth.Post("/logout", middleware.Protected(), authHdl.Logout)
 	auth.Get("/me", middleware.Protected(), authHdl.Me)
 
-	// Jemaat routes (Admin only)
-	jemaat := api.Group("/jemaat", middleware.Protected(), middleware.AdminOnly())
-	jemaat.Get("/", jemaatHdl.GetAll)
-	jemaat.Post("/", jemaatHdl.Create)
-	jemaat.Get("/:id", jemaatHdl.GetByID)
-	jemaat.Put("/:id", jemaatHdl.Update)
-	jemaat.Delete("/:id", jemaatHdl.Delete)
+	// Jemaat routes
+	jemaat := api.Group("/jemaat")
+
+	// Jemaat self routes
+	jemaatMe := jemaat.Group("/me", middleware.Protected(), middleware.RequireRole("jemaat"))
+	jemaatMe.Get("/", jemaatHdl.GetMeProfile)
+	jemaatMe.Put("/", jemaatHdl.UpdateMeProfile)
+	jemaatMe.Get("/absensi", aiHdl.GetMeAbsensi)
+	jemaatMe.Get("/donasi", donasiHdl.GetMeDonasi)
+
+	// Jemaat admin routes
+	jemaatAdmin := jemaat.Group("/", middleware.Protected(), middleware.AdminOnly())
+	jemaatAdmin.Get("/", jemaatHdl.GetAll)
+	jemaatAdmin.Post("/", jemaatHdl.Create)
+	jemaatAdmin.Get("/:id", jemaatHdl.GetByID)
+	jemaatAdmin.Put("/:id", jemaatHdl.Update)
+	jemaatAdmin.Delete("/:id", jemaatHdl.Delete)
 
 	// Jadwal Ibadah
 	jadwal := api.Group("/jadwal")

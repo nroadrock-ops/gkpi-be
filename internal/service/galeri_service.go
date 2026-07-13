@@ -48,7 +48,7 @@ func (s *galeriService) UploadAndSave(judul, fileURL string) (*domain.Galeri, er
 			"image_url": fURL,
 		}
 		
-		res, err := s.aiClient.ForwardRequest("/api/v1/ai/galeri/auto-tag", payload)
+		res, err := s.aiClient.ForwardRequest("/galeri/classify", payload)
 		if err != nil {
 			// Tangani kasus AI service down dengan graceful error
 			log.Printf("[Galeri Async] AI auto-tagging failed for ID %d: %v. Foto tetap tersimpan tanpa tag.", gID, err)

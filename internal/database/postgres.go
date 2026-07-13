@@ -1,6 +1,7 @@
 package database
 
 import (
+	"gkpi-be/internal/domain"
 	"log"
 
 	"gorm.io/driver/postgres"
@@ -14,5 +15,9 @@ func Connect(dsn string) *gorm.DB {
 	}
 
 	log.Println("Connected to the database successfully")
+
+	// Auto migrate schema
+	db.AutoMigrate(&domain.User{}, &domain.Jemaat{}, &domain.Artikel{})
+
 	return db
 }

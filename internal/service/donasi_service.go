@@ -11,6 +11,7 @@ import (
 type DonasiService interface {
 	Create(req *domain.Donasi) (*domain.Donasi, error)
 	GetStatus(id uint) (*domain.Donasi, error)
+	GetByJemaatID(jemaatID uint) ([]domain.Donasi, error)
 	ProcessWebhook(trxID, status string) error
 }
 
@@ -35,6 +36,10 @@ func (s *donasiService) Create(req *domain.Donasi) (*domain.Donasi, error) {
 
 func (s *donasiService) GetStatus(id uint) (*domain.Donasi, error) {
 	return s.repo.FindByID(id)
+}
+
+func (s *donasiService) GetByJemaatID(jemaatID uint) ([]domain.Donasi, error) {
+	return s.repo.FindByJemaatID(jemaatID)
 }
 
 func (s *donasiService) ProcessWebhook(trxID, status string) error {

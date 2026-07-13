@@ -3,6 +3,7 @@ import "time"
 
 type Donasi struct {
 	ID            uint      `json:"id" gorm:"primaryKey"`
+	JemaatID      *uint     `json:"jemaat_id"`
 	NamaDonatur   string    `json:"nama_donatur"`
 	Jumlah        float64   `json:"jumlah"`
 	Status        string    `json:"status"` // pending, success, failed

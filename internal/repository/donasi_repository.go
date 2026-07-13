@@ -8,6 +8,7 @@ import (
 type DonasiRepository interface {
 	FindByID(id uint) (*domain.Donasi, error)
 	FindByTransactionID(trxID string) (*domain.Donasi, error)
+	FindByJemaatID(jemaatID uint) ([]domain.Donasi, error)
 	Create(donasi *domain.Donasi) error
 	Update(donasi *domain.Donasi) error
 }
@@ -30,6 +31,12 @@ func (r *donasiRepository) FindByTransactionID(trxID string) (*domain.Donasi, er
 	var donasi domain.Donasi
 	err := r.db.Where("transaction_id = ?", trxID).First(&donasi).Error
 	return &donasi, err
+}
+
+func (r *donasiRepository) FindByJemaatID(jemaatID uint) ([]domain.Donasi, error) {
+	var donasis []domain.Donasi
+	err := r.db.Where("jemaat_id = ?", jemaatID).Find(&donasis).Error
+	return donasis, err
 }
 
 func (r *donasiRepository) Create(donasi *domain.Donasi) error {
