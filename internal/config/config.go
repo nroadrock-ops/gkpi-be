@@ -14,6 +14,7 @@ type Config struct {
 	JWTSecret              string
 	AIServiceURL           string
 	AIServiceInternalKey   string
+	AllowedOrigins         string
 }
 
 func LoadConfig() *Config {
@@ -29,5 +30,6 @@ func LoadConfig() *Config {
 		JWTSecret:            os.Getenv("JWT_SECRET"),
 		AIServiceURL:         os.Getenv("AI_SERVICE_URL"),
 		AIServiceInternalKey: os.Getenv("AI_SERVICE_INTERNAL_KEY"),
+		AllowedOrigins:       os.Getenv("ALLOWED_ORIGINS"),
 	}
 }

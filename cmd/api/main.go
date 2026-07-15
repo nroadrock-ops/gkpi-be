@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"gkpi-be/internal/config"
 	"gkpi-be/internal/database"
+	"gkpi-be/internal/middleware"
 	"gkpi-be/internal/router"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -42,11 +43,15 @@ func main() {
 			return false
 		},
 	}))
-	app.Use(cors.New())
+	app.Use(middleware.CORS(cfg.AllowedOrigins))
 
 	// Setup routes
 	router.SetupRoutes(app, db)
 
 	// Start server
-	log.Fatal(app.Listen(":8080"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(app.Listen("0.0.0.0:" + port))
 }
