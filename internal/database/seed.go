@@ -23,6 +23,8 @@ func Seed(db *gorm.DB) {
 		&domain.Galeri{},
 		&domain.Donasi{},
 		&domain.Absensi{},
+		&domain.OTPCode{},
+		&domain.OTPSetting{},
 	)
 	if err != nil {
 		log.Fatal("Failed to auto migrate: ", err)
@@ -30,7 +32,7 @@ func Seed(db *gorm.DB) {
 
 	// 1. Seed User
 	hashedPassword, _ := utils.HashPassword("admin123")
-	user := domain.User{Email: "admin@gkpicimahi.org", Password: hashedPassword, Role: "admin"}
+	user := domain.User{Email: "admin@gkpicimahi.org", Password: hashedPassword, Role: "admin", IsVerified: true}
 	if db.Where("email = ?", user.Email).First(&domain.User{}).Error != nil {
 		db.Create(&user)
 	}
@@ -63,6 +65,19 @@ func Seed(db *gorm.DB) {
 	pengumuman := domain.Pengumuman{Judul: "Rapat Sintua", Konten: "Diingatkan kepada seluruh Sintua untuk hadir rapat hari Sabtu."}
 	if db.Where("judul = ?", pengumuman.Judul).First(&domain.Pengumuman{}).Error != nil {
 		db.Create(&pengumuman)
+	}
+
+	// 7. Seed OTP Setting
+	var count int64
+	db.Model(&domain.OTPSetting{}).Count(&count)
+	if count == 0 {
+		db.Create(&domain.OTPSetting{
+			EmailEnabled:     true,
+			TelegramEnabled:  false,
+			OTPExpiryMinutes: 5,
+			MaxAttempts:      3,
+			MaxResendPerHour: 3,
+		})
 	}
 
 	log.Println("Seeding completed successfully!")

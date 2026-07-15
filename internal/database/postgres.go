@@ -17,7 +17,7 @@ func Connect(dsn string) *gorm.DB {
 	log.Println("Connected to the database successfully")
 
 	// Auto migrate schema
-	db.AutoMigrate(&domain.User{}, &domain.Jemaat{}, &domain.Artikel{})
+	db.AutoMigrate(&domain.User{}, &domain.Jemaat{}, &domain.Artikel{}, &domain.OTPCode{}, &domain.OTPSetting{})
 
 	return db
 }

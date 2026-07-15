@@ -3,7 +3,9 @@ package service
 import (
 	"fmt"
 	"log"
+	"strings"
 
+	"gkpi-be/internal/config"
 	"gkpi-be/internal/domain"
 	"gkpi-be/internal/repository"
 )
@@ -29,6 +31,21 @@ func (s *galeriService) GetAll() ([]domain.Galeri, error) {
 }
 
 func (s *galeriService) UploadAndSave(judul, fileURL string) (*domain.Galeri, error) {
+	cfg := config.LoadConfig()
+
+	// Perbaiki URL: Jika URL yang masuk menggunakan supabase.com atau supabase.co (hardcoded), atau sekadar relative path,
+	// kita format agar selalu menggunakan env var SUPABASE_URL.
+	// Asumsi struktur URL: {SUPABASE_URL}/storage/v1/object/public/...
+	if strings.Contains(fileURL, "supabase.com") || strings.Contains(fileURL, "supabase.co") {
+		parts := strings.Split(fileURL, "/storage/v1/object/public/")
+		if len(parts) == 2 {
+			fileURL = fmt.Sprintf("%s/storage/v1/object/public/%s", cfg.SupabaseURL, parts[1])
+		}
+	} else if !strings.HasPrefix(fileURL, "http") {
+		// Jika frontend hanya mengirim path seperti "gkpi/natal.jpg"
+		fileURL = fmt.Sprintf("%s/storage/v1/object/public/%s", cfg.SupabaseURL, fileURL)
+	}
+
 	galeri := &domain.Galeri{
 		Judul:   judul,
 		FileURL: fileURL,

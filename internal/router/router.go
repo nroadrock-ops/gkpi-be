@@ -24,11 +24,13 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	galeriRepo := repository.NewGaleriRepository(db)
 	donasiRepo := repository.NewDonasiRepository(db)
 
+	otpRepo := repository.NewOTPRepository(db)
+
 	// AI Client with BaseURL and Internal Key
 	aiClient := service.NewAIServiceClient(cfg.AIServiceURL, cfg.AIServiceInternalKey)
 
 	// Services
-	authSvc := service.NewAuthService(userRepo, jemaatRepo)
+	authSvc := service.NewAuthService(userRepo, jemaatRepo, otpRepo)
 	jemaatSvc := service.NewJemaatService(jemaatRepo)
 	jadwalSvc := service.NewJadwalService(jadwalRepo)
 	artikelSvc := service.NewArtikelService(artikelRepo)
@@ -54,11 +56,26 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	auth := api.Group("/auth")
 	auth.Post("/register", authHdl.Register)
 	auth.Post("/login", authHdl.Login)
+	auth.Post("/verify-otp", authHdl.VerifyOTP)
+	auth.Post("/resend-otp", authHdl.ResendOTP)
+	auth.Get("/telegram/status", authHdl.TelegramStatus)
+	auth.Post("/telegram/webhook", authHdl.TelegramWebhook)
+	
 	auth.Post("/refresh", authHdl.Refresh)
 	auth.Post("/forgot-password", authHdl.ForgotPassword)
 	auth.Post("/reset-password", authHdl.ResetPassword)
 	auth.Post("/logout", middleware.Protected(), authHdl.Logout)
 	auth.Get("/me", middleware.Protected(), authHdl.Me)
+
+	// Admin Pengaturan OTP (sesuai spesifikasi)
+	adminPengaturan := api.Group("/admin/pengaturan", middleware.Protected(), middleware.AdminOnly())
+	adminPengaturan.Get("/otp", authHdl.GetOTPSettings)
+	adminPengaturan.Put("/otp", authHdl.UpdateOTPSettings)
+
+	// Alias untuk /settings/otp (berdasarkan log yang mencoba mengakses path ini)
+	settingsAlias := api.Group("/settings", middleware.Protected(), middleware.AdminOnly())
+	settingsAlias.Get("/otp", authHdl.GetOTPSettings)
+	settingsAlias.Put("/otp", authHdl.UpdateOTPSettings)
 
 	// Jemaat routes
 	jemaat := api.Group("/jemaat")
@@ -67,6 +84,8 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	jemaatMe := jemaat.Group("/me", middleware.Protected(), middleware.RequireRole("jemaat"))
 	jemaatMe.Get("/", jemaatHdl.GetMeProfile)
 	jemaatMe.Put("/", jemaatHdl.UpdateMeProfile)
+	// PISAHKAN endpoint update password dari update profil umum (sebaiknya juga ditambahkan di auth kalau admin butuh)
+	jemaatMe.Put("/password", authHdl.UpdatePassword) 
 	jemaatMe.Get("/absensi", aiHdl.GetMeAbsensi)
 	jemaatMe.Get("/donasi", donasiHdl.GetMeDonasi)
 

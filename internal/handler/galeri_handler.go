@@ -25,20 +25,41 @@ func (h *GaleriHandler) GetAll(c *fiber.Ctx) error {
 }
 
 func (h *GaleriHandler) Upload(c *fiber.Ctx) error {
-	type Request struct {
-		Judul   string `json:"judul"`
-		FileURL string `json:"file_url"` // Dummy for now, assuming frontend uploaded it directly or via proxy
-	}
-	var req Request
-	if err := c.BodyParser(&req); err != nil {
-		return utils.JSONResponse(c, fiber.StatusBadRequest, false, nil, "Invalid body")
+	judul := c.FormValue("judul")
+	file, err := c.FormFile("file")
+	if err != nil {
+		// Fallback ke JSON payload (agar tidak breaking jika frontend masih pakai cara lama)
+		type Request struct {
+			Judul   string `json:"judul"`
+			FileURL string `json:"file_url"`
+		}
+		var req Request
+		if err := c.BodyParser(&req); err == nil && req.FileURL != "" {
+			galeri, err := h.service.UploadAndSave(req.Judul, req.FileURL)
+			if err != nil {
+				return utils.JSONResponse(c, fiber.StatusInternalServerError, false, nil, err.Error())
+			}
+			return utils.JSONResponse(c, fiber.StatusCreated, true, galeri, "Galeri uploaded (via JSON)")
+		}
+		return utils.JSONResponse(c, fiber.StatusBadRequest, false, nil, "File or file_url is required")
 	}
 
-	galeri, err := h.service.UploadAndSave(req.Judul, req.FileURL)
+	if judul == "" {
+		return utils.JSONResponse(c, fiber.StatusBadRequest, false, nil, "Judul is required")
+	}
+
+	// Proses upload file ke Supabase (bucket: gkpi)
+	// Asumsi bucket name adalah "gkpi" sesuai dengan URL di Postman
+	fileURL, err := utils.UploadToSupabaseStorage(file, "gkpi")
+	if err != nil {
+		return utils.JSONResponse(c, fiber.StatusInternalServerError, false, nil, "Failed to upload to Supabase: "+err.Error())
+	}
+
+	galeri, err := h.service.UploadAndSave(judul, fileURL)
 	if err != nil {
 		return utils.JSONResponse(c, fiber.StatusInternalServerError, false, nil, err.Error())
 	}
-	return utils.JSONResponse(c, fiber.StatusCreated, true, galeri, "Galeri uploaded")
+	return utils.JSONResponse(c, fiber.StatusCreated, true, galeri, "Galeri uploaded successfully")
 }
 
 func (h *GaleriHandler) Delete(c *fiber.Ctx) error {

@@ -9,6 +9,7 @@ type UserRepository interface {
 	Create(user *domain.User) error
 	FindByEmail(email string) (*domain.User, error)
 	FindByID(id uint) (*domain.User, error)
+	FindByTelegramConnectToken(token string) (*domain.User, error)
 	Update(user *domain.User) error
 }
 
@@ -33,6 +34,12 @@ func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 func (r *userRepository) FindByID(id uint) (*domain.User, error) {
 	var user domain.User
 	err := r.db.First(&user, id).Error
+	return &user, err
+}
+
+func (r *userRepository) FindByTelegramConnectToken(token string) (*domain.User, error) {
+	var user domain.User
+	err := r.db.Where("telegram_connect_token = ?", token).First(&user).Error
 	return &user, err
 }
 
